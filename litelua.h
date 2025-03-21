@@ -18,12 +18,15 @@
 // -----------------------------------
 
 
+typedef struct LiteLua LiteLua;
+
+
 /// Lua runtime functions
 typedef struct LiteLuaFuncs
 {
     lua_State*  (*create_state)(void);
     void        (*destroy_state)(lua_State* L);
-    int         (*load_string)(lua_State* L, const char* str, size_t len);
+    int         (*load_string)(LiteLua* L, const char* str, size_t len);
 } LiteLuaFuncs;
 
 
@@ -42,7 +45,7 @@ typedef struct LiteLuaGC
 
 
 /// Context of LiteLua (Core components)
-typedef struct LiteLua
+struct LiteLua
 {
     lua_State*          L;
 
@@ -57,7 +60,7 @@ typedef struct LiteLua
 #if defined(LITELUA_USING_LUAU)
     lua_CompileOptions  compile_options;
 #endif
-} LiteLua;
+};
 
 
 /// Error code of LiteLua
@@ -128,9 +131,9 @@ static void litelua_destroy_state_luajit(lua_State* L)
 }
 
 
-static int litelua_load_string_luajit(lua_State* L, const char* str, size_t len)
+static int litelua_load_string_luajit(LiteLua* context, const char* str, size_t len)
 {
-    return luaL_loadstring(L, str);
+    return luaL_loadstring(context->L, str);
 }
 
 
@@ -148,19 +151,17 @@ static void litelua_destroy_state_luau(lua_State* L)
 }
 
 
-static int litelua_load_string_luau(lua_State* L, const char* str, size_t len)
+static int litelua_load_string_luau(LiteLua* context, const char* str, size_t len)
 {
-    lua_CompileOptions opts = {0};
-
     size_t code_len;
-    char* code = luau_compile(str, len, &opts, &code_len);
+    char* code = luau_compile(str, len, &context->compile_options, &code_len);
     if (code == NULL)
     {
         fprintf(stderr, "Compile error: %s\n", code);
         return -1;
     }
 
-    int ret = luau_load(L, "temp", code, code_len, 0);
+    int ret = luau_load(context->L, "temp", code, code_len, 0);
 
     free(code);
 
@@ -234,7 +235,7 @@ int litelua_execute(LiteLua* context, const char* str, size_t len)
         return -1;
     }
 
-    if (context->funcs.load_string(context->L, str, len) != 0)
+    if (context->funcs.load_string(context, str, len) != 0)
     {
         fprintf(stderr, "Failed to load Lua code: %s\n", lua_tostring(context->L, -1));
         return -1;
@@ -260,7 +261,7 @@ int litelua_execute_safe(LiteLua* context, const char* str, size_t len)
         return -1;
     }
 
-    if (context->funcs.load_string(context->L, str, len) != 0)
+    if (context->funcs.load_string(context, str, len) != 0)
     {
         fprintf(stderr, "Failed to load Lua code: %s\n", lua_tostring(context->L, -1));
         return -1;
