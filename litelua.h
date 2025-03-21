@@ -10,37 +10,15 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#ifndef LITELUA_LUA_CORE
-#define LITELUA_LUA_CORE <lua/lua.h>
-#endif
-
-#ifndef LITELUA_LUA_LIBS
-#define LITELUA_LUA_LIBS <lua/lualib.h>
-#endif
-
-#ifndef LITELUA_LUA_XLIBS
-#define LITELUA_LUA_XLIBS <lua/lauxlib.h>
-#endif
-
-#include LITELUA_LUA_CORE
-#include LITELUA_LUA_LIBS
-#include LITELUA_LUA_XLIBS
-
-#ifndef LITELUA_API
-#define LITELUA_API
-#endif
-
-// #if defined(LITELUA_USING_LUAJIT) || defined(LITELUA_USING_LUA)
-
-// #elif defined(LITELUA_USING_LUAU)
-
-// #endif
+#include "litelua_config.h"
 
 
 // -----------------------------------
 // Types
 // -----------------------------------
 
+
+/// Lua runtime functions
 typedef struct LiteLuaFuncs
 {
     lua_State*  (*create_state)(void);
@@ -49,26 +27,80 @@ typedef struct LiteLuaFuncs
 } LiteLuaFuncs;
 
 
+/// IO plugins
+typedef struct LiteLuaIO
+{
+    void*       (*load_file)(const char* path, size_t path_len);
+} LiteLuaIO;
+
+
+/// Memory manager, GC customizations
+typedef struct LiteLuaGC
+{
+    void*       (*alloc)(size_t size);
+} LiteLuaGC;
+
+
+/// Context of LiteLua (Core components)
 typedef struct LiteLua
 {
-    lua_State*      L;
-    LiteLuaFuncs    funcs;
+    lua_State*          L;
+
+    // Callbacks, modules
+
+    LiteLuaIO           io;
+    LiteLuaGC           gc;
+    LiteLuaFuncs        funcs;
+
+    // Runtime-based required fields
+
+#if defined(LITELUA_USING_LUAU)
+    lua_CompileOptions  compile_options;
+#endif
 } LiteLua;
+
+
+/// Error code of LiteLua
+typedef enum LiteLuaError
+{
+    LiteLuaError_None,
+    LiteLuaError_InvalidState,
+    LiteLuaError_CompileFailure,
+} LiteLuaError;
+
+
+/// Result when do execution
+typedef struct LiteLuaResult
+{
+    LiteLuaError    error;
+    const char*     message;
+    bool            success;
+} LiteLuaResult;
 
 
 // -----------------------------------
 // Runtime management
 // -----------------------------------
 
+/// Load funcs of target Lua Runtime
 LITELUA_API LiteLuaFuncs    litelua_load_funcs(void);
 
-LITELUA_API LiteLua         litelua_create(const LiteLuaFuncs* funcs);
+/// Create LiteLua context base on funcs, io, gc
+LITELUA_API LiteLua         litelua_create(const LiteLuaFuncs* funcs, const LiteLuaIO* io, const LiteLuaGC* gc);
+
+/// Destroy LiteLua context, release used memory
 LITELUA_API void            litelua_destroy(LiteLua* context);
 
+/// Execute Lua chunk code without checking error, but still checking compile failure
 LITELUA_API int             litelua_execute(LiteLua* context, const char* str, size_t len);
+
+/// Execute Lua chunk code with checking error, compile failure
 LITELUA_API int             litelua_execute_safe(LiteLua* context, const char* str, size_t len);
 
+/// Binding global C function
 LITELUA_API int             litelua_bind_func(LiteLua* context, const char* name, size_t len, lua_CFunction func);
+
+/// Binding global C modules
 LITELUA_API int             litelua_bind_module(LiteLua* context, const char* name, size_t len, luaL_Reg* funcs, size_t count);
 
 
@@ -84,34 +116,39 @@ LITELUA_API int             litelua_bind_module(LiteLua* context, const char* na
 
 // LuaJIT-specific implementations
 #if defined(LITELUA_USING_LUAJIT)
-lua_State* litelua_create_state_luajit(void)
+static lua_State* litelua_create_state_luajit(void)
 {
     return luaL_newstate();
 }
 
-void litelua_destroy_state_luajit(lua_State* L)
+
+static void litelua_destroy_state_luajit(lua_State* L)
 {
     lua_close(L);
 }
 
-int litelua_load_string_luajit(lua_State* L, const char* str, size_t len)
+
+static int litelua_load_string_luajit(lua_State* L, const char* str, size_t len)
 {
     return luaL_loadstring(L, str);
 }
 
+
 // Luau-specific implementations
 #elif defined(LITELUA_USING_LUAU)
-lua_State* litelua_create_state_luau(void)
+static lua_State* litelua_create_state_luau(void)
 {
     return luaL_newstate();
 }
 
-void litelua_destroy_state_luau(lua_State* L)
+
+static void litelua_destroy_state_luau(lua_State* L)
 {
     lua_close(L);
 }
 
-int litelua_load_string_luau(lua_State* L, const char* str, size_t len)
+
+static int litelua_load_string_luau(lua_State* L, const char* str, size_t len)
 {
     lua_CompileOptions opts = {0};
 
@@ -130,34 +167,41 @@ int litelua_load_string_luau(lua_State* L, const char* str, size_t len)
     return ret;
 }
 
+
 #else
 #error "Unsupported Lua runtime"
 #endif
 
 
+// @impl(maihd): litelua_load_funcs
 LiteLuaFuncs litelua_load_funcs(void)
 {
-    LiteLuaFuncs lite_lua = {0};
+    LiteLuaFuncs lite_lua   = {0};
 
 #if defined(LITELUA_USING_LUAJIT)
-    lite_lua.create_state = litelua_create_state_luajit;
-    lite_lua.destroy_state = litelua_destroy_state_luajit;
-    lite_lua.load_string = litelua_load_string_luajit;
+    lite_lua.create_state   = litelua_create_state_luajit;
+    lite_lua.destroy_state  = litelua_destroy_state_luajit;
+    lite_lua.load_string    = litelua_load_string_luajit;
 #elif defined(LITELUA_USING_LUAU)
-    lite_lua.create_state = litelua_create_state_luau;
-    lite_lua.destroy_state = litelua_destroy_state_luau;
-    lite_lua.load_string = litelua_load_string_luau;
+    lite_lua.create_state   = litelua_create_state_luau;
+    lite_lua.destroy_state  = litelua_destroy_state_luau;
+    lite_lua.load_string    = litelua_load_string_luau;
 #endif
 
     return lite_lua;
 }
 
 
-LiteLua litelua_create(const LiteLuaFuncs* funcs)
+// @impl(maihd): litelua_create
+LiteLua litelua_create(const LiteLuaFuncs* funcs, const LiteLuaIO* io, const LiteLuaGC* gc)
 {
     LiteLua context = {0};
-    context.funcs = *funcs;
-    context.L = funcs->create_state();
+
+    context.io      = *io;
+    context.gc      = *gc;
+    context.funcs   = *funcs;
+
+    context.L       = funcs->create_state();
 
     if (!context.L)
     {
@@ -170,6 +214,7 @@ LiteLua litelua_create(const LiteLuaFuncs* funcs)
 }
 
 
+// @impl(maihd): litelua_destroy
 void litelua_destroy(LiteLua* context)
 {
     if (context && context->L)
@@ -180,6 +225,7 @@ void litelua_destroy(LiteLua* context)
 }
 
 
+// @impl(maihd): litelua_execute
 int litelua_execute(LiteLua* context, const char* str, size_t len)
 {
     if (!context || !context->L)
@@ -194,7 +240,6 @@ int litelua_execute(LiteLua* context, const char* str, size_t len)
         return -1;
     }
 
-    printf("Call function\n");
     int ret = lua_pcall(context->L, 0, 0, 0);
     if (ret != 0)
     {
@@ -206,21 +251,60 @@ int litelua_execute(LiteLua* context, const char* str, size_t len)
 }
 
 
+// @impl(maihd): litelua_execute_safe
 int litelua_execute_safe(LiteLua* context, const char* str, size_t len)
 {
-    return -1;
+    if (!context || !context->L)
+    {
+        fprintf(stderr, "Invalid Lua context\n");
+        return -1;
+    }
+
+    if (context->funcs.load_string(context->L, str, len) != 0)
+    {
+        fprintf(stderr, "Failed to load Lua code: %s\n", lua_tostring(context->L, -1));
+        return -1;
+    }
+
+    int ret = lua_pcall(context->L, 0, 0, 0);
+    if (ret != 0)
+    {
+        fprintf(stderr, "Failed to run Lua code: %s\n", lua_tostring(context->L, -1));
+        return ret;
+    }
+
+    return ret;
 }
 
 
+// @impl(maihd): litelua_bind_func
 int litelua_bind_func(LiteLua* context, const char* name, size_t len, lua_CFunction func)
 {
-    return -1;
+    if (context == NULL || context->L == NULL)
+    {
+        return -1;
+    }
+
+    luaL_Reg reg = { name, func };
+    luaL_register(context->L, "_G", &reg);
+    return 0;
 }
 
 
+// @impl(maihd): litelua_bind_module
 int litelua_bind_module(LiteLua* context, const char* name, size_t len, luaL_Reg* funcs, size_t count)
 {
-    return -1;
+    if (context == NULL || context->L == NULL)
+    {
+        return -1;
+    }
+
+    for (int i = 0; i < count; i++)
+    {
+        luaL_register(context->L, name, &funcs[i]);
+    }
+
+    return 0;
 }
 
 

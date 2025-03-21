@@ -1,8 +1,8 @@
-#define LITELUA_LUAU_CORE   <lua.h>
-#define LITELUA_LUAU_LIBS   <lualib.h>
-#define LITELUA_LUAU_CODE   <luacode.h>
+#define LITELUA_LUA_CORE    <lua.h>
+#define LITELUA_LUA_LIBS    <lualib.h>
+#define LITELUA_LUA_XLIBS   <lauxlib.h>
 
-#define LITELUA_USING_LUAU 1
+#define LITELUA_USING_LUAJIT 1
 #define LITELUA_IMPLEMENTATION
 #include "litelua.h"
 
@@ -15,7 +15,7 @@
 
 int main()
 {
-    printf("LiteLua v0.0.1-dev Luau Tests\n");
+    printf("LiteLua v0.0.1-dev Tests LuaJIT\n");
 
     LiteLuaIO lua_io = {0};
     LiteLuaGC lua_gc = {0};
@@ -23,10 +23,9 @@ int main()
     LiteLuaFuncs lua_funcs = litelua_load_funcs();
     LiteLua lua_context = litelua_create(&lua_funcs, &lua_io, &lua_gc);
 
-    // Binding C function to Luau runtime (without needed to know how Luau do it)
+    // Binding C function to LuaJIT runtime (without needed to know how LuaJIT do it)
     litelua_bind_func(&lua_context, "add", 0, f_add);
 
-    printf("Running code...\n");
     const char* code = "print(\"Hello world\")\nprint(add(2, 3))";
     int error = litelua_execute(&lua_context, code, strlen(code));
     if (error != 0)
