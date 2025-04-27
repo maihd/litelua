@@ -71,6 +71,7 @@ typedef enum LiteLuaError
     LiteLuaError_None,
     LiteLuaError_NullParams,
     LiteLuaError_InvalidState,
+    LiteLuaError_ExecuteFailure,
     LiteLuaError_CompileFailure,
 } LiteLuaError;
 
@@ -78,9 +79,9 @@ typedef enum LiteLuaError
 /// Result when do execution
 typedef struct LiteLuaResult
 {
-    LiteLuaError    error;
-    const char*     message;
-    bool            success;
+    LiteLuaError    error;      // Type of error
+    const char*     message;    // Message of operations. @note(maihd): message memory is managed by system
+    bool            success;    // Is operations success or not
 } LiteLuaResult;
 
 

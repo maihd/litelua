@@ -10,7 +10,13 @@ LiteLua litelua_create(const LiteLuaIO* io, const LiteLuaGC* gc)
     context.io      = *io;
     context.gc      = *gc;
 
-    context.L       = funcs->create_state();
+    #if defined(LITELUA_USING_LUAJIT) || defined(LITELUA_USING_LUA)
+    context.L       = litelua_create_state_luajit();
+    #elif defined(LITELUA_USING_LUAU)
+    context.L       = litelua_create_state_luau();
+    #else
+    #error Unsupported Lua Runtime
+    #endif
 
     if (!context.L)
     {
@@ -28,78 +34,132 @@ void litelua_destroy(LiteLua* context)
 {
     if (context && context->L)
     {
-        context->funcs.destroy_state(context->L);
+        #if defined(LITELUA_USING_LUAJIT) || defined(LITELUA_USING_LUA)
+        litelua_destroy_state_luajit(context->L);
+        #elif defined(LITELUA_USING_LUAU)
+        litelua_destroy_state_luau(context->L);
+        #else
+        #error Unsupported Lua Runtime
+        #endif
+
         context->L = NULL;
     }
 }
 
 
 // @impl(maihd): litelua_execute
-int litelua_execute(LiteLua* context, const char* str, size_t len)
+LiteLuaResult litelua_execute(LiteLua* context, const char* str, size_t len)
 {
     if (!context || !context->L)
     {
+        // @todo(maihd): convert to LITELUA_DEBUG(...)
         fprintf(stderr, "Invalid Lua context\n");
-        return -1;
+
+        LiteLuaResult result = {
+            LiteLuaError_InvalidState,
+            "Invalid Lua State",
+            false
+        };
+        return result;
     }
 
-    if (litelua_load_string(context, str, len) != 0)
+    LiteLuaResult result = litelua_load_string(context, str, len);
+    if (!result.success)
     {
-        fprintf(stderr, "Failed to load Lua code: %s\n", lua_tostring(context->L, -1));
-        return -1;
+        // fprintf(stderr, "Failed to load Lua code: %s\n", lua_tostring(context->L, -1));
+        fprintf(stderr, "Failed to load Lua code: %s\n", result.message); // @todo(maihd): convert to LITELUA_DEBUG(...)
+        return result;
     }
 
-    lua_call(context->L, 0, 0, 0);
-    return 0;
+    lua_call(context->L, 0, 0);
+
+    result.error    = LiteLuaError_None;
+    result.message  = "Success";
+    result.success  = true;
+    return result;
 }
 
 
 // @impl(maihd): litelua_execute_safe
-int litelua_execute_safe(LiteLua* context, const char* str, size_t len)
+LiteLuaResult litelua_execute_safe(LiteLua* context, const char* str, size_t len)
 {
     if (!context || !context->L)
     {
+        // @todo(maihd): convert to LITELUA_DEBUG(...)
         fprintf(stderr, "Invalid Lua context\n");
-        return -1;
+
+        LiteLuaResult result = {
+            LiteLuaError_InvalidState,
+            "Invalid Lua State",
+            false
+        };
+        return result;
     }
 
-    if (litelua_load_string(context, str, len) != 0)
+    LiteLuaResult result = litelua_load_string(context, str, len);
+    if (!result.success)
     {
-        fprintf(stderr, "Failed to load Lua code: %s\n", lua_tostring(context->L, -1));
-        return -1;
+        // fprintf(stderr, "Failed to load Lua code: %s\n", lua_tostring(context->L, -1));
+        fprintf(stderr, "Failed to load Lua code: %s\n", result.message); // @todo(maihd): convert to LITELUA_DEBUG(...)
+        return result;
     }
 
     int ret = lua_pcall(context->L, 0, 0, 0);
     if (ret != 0)
     {
-        fprintf(stderr, "Failed to run Lua code: %s\n", lua_tostring(context->L, -1));
-        return ret;
+        const char* message = lua_tostring(context->L, -1);
+        fprintf(stderr, "Failed to run Lua code: %s\n", message); // @todo(maihd): convert to LITELUA_DEBUG(...)
+        
+        result.error    = LiteLuaError_ExecuteFailure;
+        result.message  = message;
+        result.success  = false;
+        return result;
     }
 
-    return ret;
+    result.error    = LiteLuaError_None;
+    result.message  = "Success";
+    result.success  = true;
+    return result;
 }
 
 
 // @impl(maihd): litelua_bind_func
-int litelua_bind_func(LiteLua* context, const char* name, size_t len, lua_CFunction func)
+LiteLuaResult litelua_bind_func(LiteLua* context, const char* name, size_t len, lua_CFunction func)
 {
-    if (context == NULL || context->L == NULL)
+    if (!context || !context->L)
     {
-        return -1;
+        fprintf(stderr, "Invalid Lua context\n");
+        LiteLuaResult result = {
+            LiteLuaError_InvalidState,
+            "Invalid Lua State",
+            false
+        };
+        return result;
     }
 
     luaL_Reg reg = { name, func };
     luaL_register(context->L, "_G", &reg);
-    return 0;
+
+    LiteLuaResult result;
+    result.error    = LiteLuaError_None;
+    result.message  = "Success";
+    result.success  = true;
+    return result;
 }
 
 
 // @impl(maihd): litelua_bind_module
-int litelua_bind_module(LiteLua* context, const char* name, size_t len, luaL_Reg* funcs, size_t count)
+LiteLuaResult litelua_bind_module(LiteLua* context, const char* name, size_t len, luaL_Reg* funcs, size_t count)
 {
-    if (context == NULL || context->L == NULL)
+    if (!context || !context->L)
     {
-        return -1;
+        fprintf(stderr, "Invalid Lua context\n");
+        LiteLuaResult result = {
+            LiteLuaError_InvalidState,
+            "Invalid Lua State",
+            false
+        };
+        return result;
     }
 
     for (int i = 0; i < count; i++)
@@ -107,7 +167,11 @@ int litelua_bind_module(LiteLua* context, const char* name, size_t len, luaL_Reg
         luaL_register(context->L, name, &funcs[i]);
     }
 
-    return 0;
+    LiteLuaResult result;
+    result.error    = LiteLuaError_None;
+    result.message  = "Success";
+    result.success  = true;
+    return result;
 }
 
 

@@ -25,6 +25,7 @@ static void litelua_destroy_state_luau(lua_State* L)
 }
 
 
+// @impl(maihd): Luau's litelua_load_string_luau
 static int litelua_load_string_luau(LiteLua* context, const char* str, size_t len)
 {
     size_t code_len;
@@ -40,6 +41,19 @@ static int litelua_load_string_luau(LiteLua* context, const char* str, size_t le
     free(code);
 
     return ret;
+}
+
+// @impl(maihd): Luau's litelua_load_string
+LiteLuaResult   litelua_load_string(LiteLua* context, const char* str, size_t len)
+{
+
+}
+
+
+// @impl(maihd): Luau's litelua_load_file
+LiteLuaResult litelua_load_file(LiteLua* context, const char* str, size_t len)
+{
+    
 }
 
 // Using UnityBuild to reuse implementation

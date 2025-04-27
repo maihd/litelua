@@ -29,6 +29,59 @@ static int litelua_load_string_luajit(LiteLua* context, const char* str, size_t 
     return luaL_loadstring(context->L, str);
 }
 
+// @impl(maihd): Luau's litelua_load_string
+LiteLuaResult litelua_load_string(LiteLua* context, const char* str, size_t len)
+{
+    int ret = litelua_load_string_luajit(context, str, len);
+    if (ret != 0)
+    {
+        const char* message = lua_tostring(context->L, -1);
+
+        LiteLuaResult result = {
+            LiteLuaError_CompileFailure,
+            message,
+            false
+        };
+        return result;
+    }
+    else 
+    {
+        LiteLuaResult result = {
+            LiteLuaError_None,
+            "Success",
+            true
+        };
+        return result;
+    }
+}
+
+
+// @impl(maihd): Luau's litelua_load_file
+LiteLuaResult litelua_load_file(LiteLua* context, const char* str, size_t len)
+{
+    int ret = litelua_load_string_luajit(context, str, len);
+    if (ret != 0)
+    {
+        const char* message = lua_tostring(context->L, -1);
+
+        LiteLuaResult result = {
+            LiteLuaError_CompileFailure,
+            message,
+            false
+        };
+        return result;
+    }
+    else 
+    {
+        LiteLuaResult result = {
+            LiteLuaError_None,
+            "Success",
+            true
+        };
+        return result;
+    }
+}
+
 // Using UnityBuild to reuse implementation
 #include "litelua_common.c"
 

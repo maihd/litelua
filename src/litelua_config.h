@@ -14,15 +14,15 @@
 #if defined(LITELUA_USING_LUAJIT) || defined(LITELUA_USING_LUA)
 
     #ifndef LITELUA_LUA_CORE
-    #define LITELUA_LUA_CORE <lua/lua.h>        // Change the path to lua.h
+    #define LITELUA_LUA_CORE <lua/lua.h>        // Change the path to Lua/LuaJIT lua.h
     #endif
 
     #ifndef LITELUA_LUA_LIBS
-    #define LITELUA_LUA_LIBS <lua/lualib.h>     // Change the path to lualib.h
+    #define LITELUA_LUA_LIBS <lua/lualib.h>     // Change the path to Lua/LuaJIT lualib.h
     #endif
 
     #ifndef LITELUA_LUA_XLIBS
-    #define LITELUA_LUA_XLIBS <lua/lauxlib.h>   // Change the path to lauxlib.h
+    #define LITELUA_LUA_XLIBS <lua/lauxlib.h>   // Change the path to Lua/LuaJIT lauxlib.h
     #endif
 
     #include LITELUA_LUA_CORE
@@ -32,15 +32,15 @@
 #elif defined(LITELUA_USING_LUAU)
 
     #ifndef LITELUA_LUAU_CORE
-    #define LITELUA_LUAU_CORE <luau/lua.h>      // Change the path to lua.h
+    #define LITELUA_LUAU_CORE <luau/lua.h>      // Change the path to Luau's lua.h
     #endif
 
     #ifndef LITELUA_LUAU_LIBS
-    #define LITELUA_LUAU_LIBS <luau/lualib.h>   // Change the path to lualib.h
+    #define LITELUA_LUAU_LIBS <luau/lualib.h>   // Change the path to Luau's lualib.h
     #endif
 
     #ifndef LITELUA_LUAU_CODE
-    #define LITELUA_LUAU_CODE <luau/luacode.h>  // Change the path to luacode.h
+    #define LITELUA_LUAU_CODE <luau/luacode.h>  // Change the path to Luau's luacode.h
     #endif
 
     #include LITELUA_LUAU_CORE
