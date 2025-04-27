@@ -1,10 +1,5 @@
-#define LITELUA_LUA_CORE    <lua.h>
-#define LITELUA_LUA_LIBS    <lualib.h>
-#define LITELUA_LUA_XLIBS   <lauxlib.h>
 
-#define LITELUA_USING_LUAJIT 1
-#define LITELUA_IMPLEMENTATION
-#include "litelua.h"
+#include "src/litelua.h"
 
 #include <stdio.h>
 #include <string.h>

@@ -1,117 +1,7 @@
-/// LiteLuaFuncs v0.0.1-dev
+/// LiteLua v0.0.1-dev
 /// Copyright: MaiHD @ 2025
 
-#pragma once
-
-// -----------------------------------
-// Include header files
-// -----------------------------------
-
-#include <stdint.h>
-#include <stdbool.h>
-
-#include "litelua_config.h"
-
-
-// -----------------------------------
-// Types
-// -----------------------------------
-
-
-typedef struct LiteLua LiteLua;
-
-
-/// Lua runtime functions
-typedef struct LiteLuaFuncs
-{
-    lua_State*  (*create_state)(void);
-    void        (*destroy_state)(lua_State* L);
-    int         (*load_string)(LiteLua* L, const char* str, size_t len);
-} LiteLuaFuncs;
-
-
-/// IO plugins
-typedef struct LiteLuaIO
-{
-    void*       (*load_file)(const char* path, size_t path_len);
-} LiteLuaIO;
-
-
-/// Memory manager, GC customizations
-typedef struct LiteLuaGC
-{
-    void*       (*alloc)(size_t size);
-} LiteLuaGC;
-
-
-/// Context of LiteLua (Core components)
-struct LiteLua
-{
-    lua_State*          L;
-
-    // Callbacks, modules
-
-    LiteLuaIO           io;
-    LiteLuaGC           gc;
-    LiteLuaFuncs        funcs;
-
-    // Runtime-based required fields
-
-#if defined(LITELUA_USING_LUAU)
-    lua_CompileOptions  compile_options;
-#endif
-};
-
-
-/// Error code of LiteLua
-typedef enum LiteLuaError
-{
-    LiteLuaError_None,
-    LiteLuaError_InvalidState,
-    LiteLuaError_CompileFailure,
-} LiteLuaError;
-
-
-/// Result when do execution
-typedef struct LiteLuaResult
-{
-    LiteLuaError    error;
-    const char*     message;
-    bool            success;
-} LiteLuaResult;
-
-
-// -----------------------------------
-// Runtime management
-// -----------------------------------
-
-/// Load funcs of target Lua Runtime
-LITELUA_API LiteLuaFuncs    litelua_load_funcs(void);
-
-/// Create LiteLua context base on funcs, io, gc
-LITELUA_API LiteLua         litelua_create(const LiteLuaFuncs* funcs, const LiteLuaIO* io, const LiteLuaGC* gc);
-
-/// Destroy LiteLua context, release used memory
-LITELUA_API void            litelua_destroy(LiteLua* context);
-
-/// Execute Lua chunk code without checking error, but still checking compile failure
-LITELUA_API int             litelua_execute(LiteLua* context, const char* str, size_t len);
-
-/// Execute Lua chunk code with checking error, compile failure
-LITELUA_API int             litelua_execute_safe(LiteLua* context, const char* str, size_t len);
-
-/// Binding global C function
-LITELUA_API int             litelua_bind_func(LiteLua* context, const char* name, size_t len, lua_CFunction func);
-
-/// Binding global C modules
-LITELUA_API int             litelua_bind_module(LiteLua* context, const char* name, size_t len, luaL_Reg* funcs, size_t count);
-
-
-// -----------------------------------
-// Implementation
-// -----------------------------------
-
-#ifdef LITELUA_IMPLEMENTATION
+#include "litelua.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -308,8 +198,6 @@ int litelua_bind_module(LiteLua* context, const char* name, size_t len, luaL_Reg
     return 0;
 }
 
-
-#endif
 
 //! EOF
 

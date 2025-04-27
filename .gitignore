@@ -1,13 +1,4 @@
-# Test files
-
-a
-a.exe
-a.exp
-a.lib
-
-test_luau.exe
-test_luajit.exe
-
 # Build folder
 
 build
+output

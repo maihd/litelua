@@ -1,15 +1,10 @@
-#define LITELUA_LUAU_CORE   <lua.h>
-#define LITELUA_LUAU_LIBS   <lualib.h>
-#define LITELUA_LUAU_CODE   <luacode.h>
-
-#define LITELUA_USING_LUAU 1
-#define LITELUA_IMPLEMENTATION
-#include "litelua.h"
+// Use LiteLua as C library
+#include "src/litelua.h"
 
 #include <stdio.h>
 #include <string.h>
 
-
+// Import common functions
 #include "litelua_tests_common.c"
 
 
