@@ -10,12 +10,11 @@
 
 int main()
 {
-    printf("LiteLua v0.0.1-dev Tests LuaJIT\n");
+    printf("LiteLua v0.0.1-dev LuaJIT Tests\n");
 
     LiteLuaIO lua_io = {0};
     LiteLuaGC lua_gc = {0};
 
-    // LiteLuaFuncs lua_funcs = litelua_load_funcs();
     LiteLua lua_context = litelua_create(&lua_io, &lua_gc);
 
     // Binding C function to LuaJIT runtime (without needed to know how LuaJIT do it)

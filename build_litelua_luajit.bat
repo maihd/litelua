@@ -3,10 +3,10 @@
 call build_clean.bat
 call build_common.bat
 
-set LITELUA_LUAJIT_FOLDER=%LITELUA_DIR%\libs\luajit_2.1.0-beta3
+set LITELUA_LUAJIT_FOLDER=%LITELUA_DIR%\libs\luajit_2.1.0-rolling_04302025
 set LITELUA_LUAJIT_INCLUDE=%LITELUA_LUAJIT_FOLDER%\include
 set LITELUA_LUAJIT_LIBRARY=%LITELUA_LUAJIT_FOLDER%\prebuilt\x64\lua51_static.lib
-set LITELUA_LUAJIT_OUTPUT=%LITELUA_OUTPUT%\litelua_luajit_2.1.0-beta3
+set LITELUA_LUAJIT_OUTPUT=%LITELUA_OUTPUT%\litelua_luajit_2.1.0-rolling_04302025
 
 set LITELUA_LUAJIT_COMPILE_OPTIONS=^
     -std=c11 ^
@@ -18,8 +18,6 @@ set LITELUA_LUAJIT_COMPILE_OPTIONS=^
     -I%LITELUA_LUAJIT_INCLUDE%
 
 :: Building library
-
-call build_clean.bat
 
 clang -c src\litelua_luajit.c -o %LITELUA_BUILD_DIR%\litelua_luajit.obj %LITELUA_LUAJIT_COMPILE_OPTIONS%
 
