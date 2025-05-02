@@ -13,12 +13,19 @@
 #error "Unsupported Lua runtime"
 #endif
 
+// @impl(maihd): Luau's litelua_create_state_luau
 static lua_State* litelua_create_state_luau(const LiteLuaGC* gc)
 {
-    return lua_newstate(gc->alloc, gc->user_data);
+    if (gc && gc->alloc)
+    {
+        return lua_newstate(gc->alloc, gc->user_data);
+    }
+
+    return luaL_newstate();
 }
 
 
+// @impl(maihd): Luau's litelua_destroy_state_luau
 static void litelua_destroy_state_luau(lua_State* L)
 {
     lua_close(L);
@@ -42,6 +49,7 @@ static int litelua_load_string_luau(LiteLua* context, const char* str, size_t le
 
     return ret;
 }
+
 
 // @impl(maihd): Luau's litelua_load_string
 LiteLuaResult litelua_load_string(LiteLua* context, const char* str, size_t len)
