@@ -37,7 +37,7 @@ typedef struct LiteLuaIO
     void*       user_data;
 
     void*       (*load_file)(void* user_data, const char* path, size_t path_len, size_t* out_size);
-    void        (*unload_file_data)(void* user_data, void* data, void* size);
+    void        (*unload_file_data)(void* user_data, void* data, size_t size);
 } LiteLuaIO;
 
 
@@ -79,6 +79,7 @@ typedef enum LiteLuaError
     LiteLuaError_InvalidState,
     LiteLuaError_ExecuteFailure,
     LiteLuaError_CompileFailure,
+    LiteLuaError_UnableToLoadFile,
 } LiteLuaError;
 
 
@@ -113,13 +114,7 @@ LITELUA_API LiteLuaResult   litelua_load_string(LiteLua* context, const char* st
 ///     - Luau does not have one
 ///     - Lua and LuaJIT use stdio to load file
 ///     -> LiteLua use custom IO callbacks, and use litelua_load_string to push content to Lua stack
-LITELUA_API LiteLuaResult   litelua_load_file(LiteLua* context, const char* str, size_t len);
-
-/// Execute Lua chunk code without checking error, but still checking compile failure
-// LITELUA_API void            litelua_call(LiteLua* context, const char* str, size_t len);
-
-/// Execute Lua chunk code with checking error, compile failure
-// LITELUA_API void            litelua_pcall(LiteLua* context, const char* str, size_t len);
+LITELUA_API LiteLuaResult   litelua_load_file(LiteLua* context, const char* path, size_t path_len);
 
 /// Execute Lua chunk code without checking error, but still checking compile failure
 LITELUA_API LiteLuaResult   litelua_execute(LiteLua* context, const char* str, size_t len);
@@ -127,11 +122,23 @@ LITELUA_API LiteLuaResult   litelua_execute(LiteLua* context, const char* str, s
 /// Execute Lua chunk code with checking error, compile failure
 LITELUA_API LiteLuaResult   litelua_execute_safe(LiteLua* context, const char* str, size_t len);
 
+/// Execute Lua chunk code from file without checking error, but still checking compile failure
+LITELUA_API LiteLuaResult   litelua_execute_file(LiteLua* context, const char* str, size_t len);
+
+/// Execute Lua chunk code from file with checking error, compile failure
+LITELUA_API LiteLuaResult   litelua_execute_file_safe(LiteLua* context, const char* str, size_t len);
+
 /// Binding global C function
 LITELUA_API LiteLuaResult   litelua_bind_func(LiteLua* context, const char* name, size_t len, lua_CFunction func);
 
 /// Binding global C modules
 LITELUA_API LiteLuaResult   litelua_bind_module(LiteLua* context, const char* name, size_t len, luaL_Reg* funcs, size_t count);
+
+/// Execute Lua chunk code without checking error, but still checking compile failure
+// LITELUA_API void            litelua_call(LiteLua* context, const char* str, size_t len);
+
+/// Execute Lua chunk code with checking error, compile failure
+// LITELUA_API void            litelua_pcall(LiteLua* context, const char* str, size_t len);
 
 
 // -----------------------------------

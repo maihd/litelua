@@ -44,7 +44,7 @@ LiteLuaResult litelua_load_string(LiteLua* context, const char* str, size_t len)
         };
         return result;
     }
-    else 
+    else
     {
         LiteLuaResult result = {
             LiteLuaError_None,
@@ -57,29 +57,48 @@ LiteLuaResult litelua_load_string(LiteLua* context, const char* str, size_t len)
 
 
 // @impl(maihd): Luau's litelua_load_file
-LiteLuaResult litelua_load_file(LiteLua* context, const char* str, size_t len)
+LiteLuaResult litelua_load_file(LiteLua* context, const char* path, size_t path_len)
 {
-    int ret = litelua_load_string_luajit(context, str, len);
-    if (ret != 0)
+    if (context->io.load_file)
     {
-        const char* message = lua_tostring(context->L, -1);
+        const char* str = path;
+        const size_t len = path_len;
 
-        LiteLuaResult result = {
-            LiteLuaError_CompileFailure,
-            message,
-            false
-        };
-        return result;
+        int ret = litelua_load_string_luajit(context, str, len);
+        if (ret != 0)
+        {
+            const char* message = lua_tostring(context->L, -1);
+
+            LiteLuaResult result = {
+                LiteLuaError_CompileFailure,
+                message,
+                false
+            };
+            return result;
+        }
     }
-    else 
+    else
     {
-        LiteLuaResult result = {
-            LiteLuaError_None,
-            "Success",
-            true
-        };
-        return result;
+        int ret = luaL_loadfile(context->L, path);
+        if (ret != 0)
+        {
+            const char* message = lua_tostring(context->L, -1);
+
+            LiteLuaResult result = {
+                LiteLuaError_CompileFailure,
+                message,
+                false
+            };
+            return result;
+        }
     }
+
+    LiteLuaResult result = {
+        LiteLuaError_None,
+        "Success",
+        true
+    };
+    return result;
 }
 
 // Using UnityBuild to reuse implementation

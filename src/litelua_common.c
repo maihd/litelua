@@ -123,6 +123,82 @@ LiteLuaResult litelua_execute_safe(LiteLua* context, const char* str, size_t len
 }
 
 
+// @impl(maihd): litelua_execute_file
+LiteLuaResult litelua_execute_file(LiteLua* context, const char* path, size_t path_len)
+{
+    if (!context || !context->L)
+    {
+        // @todo(maihd): convert to LITELUA_DEBUG(...)
+        fprintf(stderr, "Invalid Lua context\n");
+
+        LiteLuaResult result = {
+            LiteLuaError_InvalidState,
+            "Invalid Lua State",
+            false
+        };
+        return result;
+    }
+
+    LiteLuaResult result = litelua_load_file(context, path, path_len);
+    if (!result.success)
+    {
+        // fprintf(stderr, "Failed to load Lua code: %s\n", lua_tostring(context->L, -1));
+        fprintf(stderr, "Failed to load Lua code: %s\n", result.message); // @todo(maihd): convert to LITELUA_DEBUG(...)
+        return result;
+    }
+
+    lua_call(context->L, 0, 0);
+
+    result.error    = LiteLuaError_None;
+    result.message  = "Success";
+    result.success  = true;
+    return result;
+}
+
+
+// @impl(maihd): litelua_execute_file_safe
+LiteLuaResult litelua_execute_file_safe(LiteLua* context, const char* path, size_t path_len)
+{
+    if (!context || !context->L)
+    {
+        // @todo(maihd): convert to LITELUA_DEBUG(...)
+        fprintf(stderr, "Invalid Lua context\n");
+
+        LiteLuaResult result = {
+            LiteLuaError_InvalidState,
+            "Invalid Lua State",
+            false
+        };
+        return result;
+    }
+
+    LiteLuaResult result = litelua_load_file(context, path, path_len);
+    if (!result.success)
+    {
+        // fprintf(stderr, "Failed to load Lua code: %s\n", lua_tostring(context->L, -1));
+        fprintf(stderr, "Failed to load Lua code: %s\n", result.message); // @todo(maihd): convert to LITELUA_DEBUG(...)
+        return result;
+    }
+
+    int ret = lua_pcall(context->L, 0, 0, 0);
+    if (ret != 0)
+    {
+        const char* message = lua_tostring(context->L, -1);
+        fprintf(stderr, "Failed to run Lua code: %s\n", message); // @todo(maihd): convert to LITELUA_DEBUG(...)
+
+        result.error    = LiteLuaError_ExecuteFailure;
+        result.message  = message;
+        result.success  = false;
+        return result;
+    }
+
+    result.error    = LiteLuaError_None;
+    result.message  = "Success";
+    result.success  = true;
+    return result;
+}
+
+
 // @impl(maihd): litelua_bind_func
 LiteLuaResult litelua_bind_func(LiteLua* context, const char* name, size_t len, lua_CFunction func)
 {

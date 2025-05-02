@@ -15,6 +15,7 @@ set LITELUA_LUAU_COMPILE_OPTIONS=^
     -DLITELUA_LUAU_LIBS="<lualib.h>" ^
     -DLITELUA_LUAU_CODE="<luacode.h>" ^
     -DLITELUA_USING_LUAU=1 ^
+    -D_CRT_SECURE_NO_WARNINGS ^
     -I%LITELUA_LUAU_INCLUDE%
 
 :: Building library

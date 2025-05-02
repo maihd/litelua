@@ -79,29 +79,45 @@ LiteLuaResult litelua_load_string(LiteLua* context, const char* str, size_t len)
 
 
 // @impl(maihd): Luau's litelua_load_file
-LiteLuaResult litelua_load_file(LiteLua* context, const char* str, size_t len)
+LiteLuaResult litelua_load_file(LiteLua* context, const char* path, size_t path_len)
 {
-    int ret = litelua_load_string_luau(context, str, len);
-    if (ret != 0)
+    if (context->io.load_file)
     {
-        const char* message = lua_tostring(context->L, -1);
+        size_t len;
+        const char* str = (const char*)context->io.load_file(context->io.user_data, path, path_len, &len);
 
-        LiteLuaResult result = {
-            LiteLuaError_CompileFailure,
-            message,
-            false
-        };
-        return result;
+        int ret = litelua_load_string_luau(context, str, len);
+
+        context->io.unload_file_data(context->io.user_data, (void*)str, len);
+
+        if (ret != 0)
+        {
+            const char* message = lua_tostring(context->L, -1);
+
+            LiteLuaResult result = {
+                LiteLuaError_CompileFailure,
+                message,
+                false
+            };
+            return result;
+        }
     }
     else
     {
         LiteLuaResult result = {
-            LiteLuaError_None,
-            "Success",
-            true
+            LiteLuaError_UnableToLoadFile,
+            "IO load_file is null",
+            false
         };
         return result;
     }
+
+    LiteLuaResult result = {
+        LiteLuaError_None,
+        "Success",
+        true
+    };
+    return result;
 }
 
 // Using UnityBuild to reuse implementation
