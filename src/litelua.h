@@ -34,16 +34,22 @@ typedef struct LiteLua LiteLua;
 /// IO plugins
 typedef struct LiteLuaIO
 {
+    void*       user_data;
+
     void*       (*load_file)(void* user_data, const char* path, size_t path_len, size_t* out_size);
+    void        (*unload_file_data)(void* user_data, void* data, void* size);
 } LiteLuaIO;
 
 
 /// Memory manager, GC customizations
 typedef struct LiteLuaGC
 {
-    void*       arena;
+    uint32_t    flags;
 
-    int         use_incremental_gc;
+    void*       user_data;
+
+    void*       (*alloc)(void* user_data, void* old_buffer, size_t old_size, size_t new_size);
+    // void        (*free)(void* user_data, void* buffer);
 } LiteLuaGC;
 
 

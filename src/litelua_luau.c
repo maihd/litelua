@@ -13,9 +13,9 @@
 #error "Unsupported Lua runtime"
 #endif
 
-static lua_State* litelua_create_state_luau(void)
+static lua_State* litelua_create_state_luau(const LiteLuaGC* gc)
 {
-    return luaL_newstate();
+    return lua_newstate(gc->alloc, gc->user_data);
 }
 
 

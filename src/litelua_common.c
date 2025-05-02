@@ -13,7 +13,7 @@ LiteLua litelua_create(const LiteLuaIO* io, const LiteLuaGC* gc)
     #if defined(LITELUA_USING_LUAJIT) || defined(LITELUA_USING_LUA)
     context.L       = litelua_create_state_luajit();
     #elif defined(LITELUA_USING_LUAU)
-    context.L       = litelua_create_state_luau();
+    context.L       = litelua_create_state_luau(gc);
     #else
     #error Unsupported Lua Runtime
     #endif
@@ -109,7 +109,7 @@ LiteLuaResult litelua_execute_safe(LiteLua* context, const char* str, size_t len
     {
         const char* message = lua_tostring(context->L, -1);
         fprintf(stderr, "Failed to run Lua code: %s\n", message); // @todo(maihd): convert to LITELUA_DEBUG(...)
-        
+
         result.error    = LiteLuaError_ExecuteFailure;
         result.message  = message;
         result.success  = false;
