@@ -1,5 +1,5 @@
-/// LiteLua v0.0.1-dev
-/// Copyright: MaiHD @ 2025"
+/// LiteLua v0.0.2-dev
+/// Copyright: MaiHD @ 2025
 
 
 // @impl(maihd): litelua_create

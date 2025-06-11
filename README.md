@@ -42,6 +42,6 @@ Find in `libs` folders.
 
 
 ## Meta
-- Version: v0.0.1-dev
+- Version: v0.0.2-dev
 - License: Unlicense
 - Copyright: MaiHD @ 2025

@@ -1,3 +1,6 @@
+/// LiteLua v0.0.2-dev
+/// Copyright: MaiHD @ 2025
+
 #pragma once
 
 // Un-comment to make LiteLua use LuaJIT

@@ -1,5 +1,6 @@
-/// LiteLuaFuncs v0.0.1-dev
+/// LiteLua v0.0.2-dev
 /// Copyright: MaiHD @ 2025
+/// LuaJIT 2 implementation
 
 #include "litelua.h"
 

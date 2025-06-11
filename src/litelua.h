@@ -1,4 +1,4 @@
-/// LiteLua v0.0.1-dev
+/// LiteLua v0.0.2-dev
 /// Copyright: MaiHD @ 2025
 
 #pragma once
@@ -12,12 +12,12 @@
 
 #include "litelua_config.h"
 
-// // -----------------------------------
-// // Typedef from Lua runtime
-// // @note(maihd): currently there are
-// //      no difference from other
-// //      Lua runtime
-// // -----------------------------------
+// -----------------------------------
+// Typedef from Lua runtime
+// @note(maihd): currently there are
+//      no difference from other
+//      Lua runtime
+// -----------------------------------
 
 // typedef struct lua_State    lua_State;
 // typedef struct luaL_Reg     luaL_Reg;

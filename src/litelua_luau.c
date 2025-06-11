@@ -1,6 +1,6 @@
-/// LiteLua v0.0.1-dev
-/// Luau implementation
+/// LiteLua v0.0.2-dev
 /// Copyright: MaiHD @ 2025
+/// Luau implementation
 
 #include "litelua.h"
 

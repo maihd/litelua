@@ -20,7 +20,8 @@ set LITELUA_LUAU_COMPILE_OPTIONS=^
 
 :: Building library
 
-clang -c src\litelua_luau.c -o %LITELUA_BUILD_DIR%\litelua_luau.obj %LITELUA_LUAU_COMPILE_OPTIONS%
+clang -c %LITELUA_DIR%\src\litelua_luau.c -o %LITELUA_BUILD_DIR%\litelua_luau.obj %LITELUA_LUAU_COMPILE_OPTIONS%
+clang -c %LITELUA_DIR%\src\luau_ext\lauxlib.c -o %LITELUA_BUILD_DIR%\litelua_luau.obj %LITELUA_LUAU_COMPILE_OPTIONS% -Isrc
 
 llvm-ar x %LITELUA_LUAU_FOLDER%\prebuilt\x64\Luau.Config.lib --output %LITELUA_BUILD_DIR%
 llvm-ar x %LITELUA_LUAU_FOLDER%\prebuilt\x64\Luau.Require.lib --output %LITELUA_BUILD_DIR%
@@ -50,5 +51,7 @@ if not exist %LITELUA_LUAU_OUTPUT%\prebuilt\x64 (
 )
 
 xcopy %LITELUA_LUAU_INCLUDE% %LITELUA_LUAU_OUTPUT%\include /D /E /Y /Q
+xcopy "%LITELUA_DIR%\src\litelua.h" %LITELUA_LUAU_OUTPUT%\include /Y /Q
+xcopy "%LITELUA_DIR%\src\luau_ext\lauxlib.h" %LITELUA_LUAU_OUTPUT%\include /Y /Q
 
-xcopy %LITELUA_BUILD_DIR%\litelua_luau.lib %LITELUA_LUAU_OUTPUT%\prebuilt\x64 /D /E /Y /Q
+xcopy %LITELUA_BUILD_DIR%\litelua_luau.lib %LITELUA_LUAU_OUTPUT%\prebuilt\x64 /Y /Q
