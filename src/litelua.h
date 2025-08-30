@@ -7,6 +7,7 @@
 // Include header files
 // -----------------------------------
 
+#include <stddef.h>
 #include <stdint.h>
 #include <stdbool.h>
 

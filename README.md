@@ -4,7 +4,7 @@ Mainly created for LiteFX. Written in C11, mordern C code.
 
 
 ## Features
-- Support multi Lua dialects, runtime: Lua, LuaJIT, Luau.
+- Multiple Lua dialects are supported, included runtime: Lua, LuaJIT, Luau.
 - Prebuilt Lua runtimes to help faster integrate to existing C/C++ projects. Merge multi library files to single one.
 - Easy add extensions. This library also have Lua52, Lua53 extensions already for LuaJIT.
 - Quality of tools: Debugging, Profiler.
@@ -28,11 +28,11 @@ Mainly created for LiteFX. Written in C11, mordern C code.
 Currently only work on Windows. Because Mai Lite Editor focused to using on Windows (Game developer).
 When building completed, result contains in `output` folder, the library file have already packed with runtime.
 No need to build your application with Lua runtime library.
-- Build LuaJIT: `build_litelua_luajit.bat`
-- Build Luau: `build_litelua_luau.bat`
+- Build LuaJIT: `scripts/build_litelua_luajit.bat`/`scripts/build_litelua_luajit.sh`
+- Build Luau: `scripts/build_litelua_luau.bat`/`scripts/build_litelua_luau.sh`
 
 
-## Showcases
+## Showcases (imagination projects)
 - LiteFX (Backbone of Mai Lite Editor)
 - Raylib Luau bindings
 - BeefyMoon library for working with Lua on Beef applications
