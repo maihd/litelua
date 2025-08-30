@@ -19,8 +19,9 @@ Mainly created for LiteFX. Written in C11, mordern C code.
 - One simple API to work lua bindings. Easy embedding to exist projects.
 - Focused on simplicity, low files.
 - Written in C11, modern C code, good and easy custom io/memory management.
-- Focused on the runtime parts, not the C API, so when your application using Luau, need compiling code with C++ compiler.
+- Focused on the runtime parts, not the C API.
 - Focused on simple, well-docs functions, clear names. And keep its low.
+- Only functions that need wrapper are made, otherwise use common functions (Luau and Lua have many common C API).
 
 
 ## Building
