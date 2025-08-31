@@ -39,8 +39,15 @@ cmake -B build -GNinja
 
 cmake --build build
 
-mkdir -p $LUAU_PREBUILT_FOLDER
+mkdir -p include
+cp VM/include/lua.h include
+cp VM/include/lualib.h include
+cp VM/include/lauxlib.h include
+cp VM/include/luaconf.h include
+cp CodeGen/include/luacodegen.h include
+cp Compiler/include/luacode.h include
 
+mkdir -p $LUAU_PREBUILT_FOLDER
 cp build/libLuau.*.a $LUAJIT_PREBUILT_FOLDER
 
 cd ../..
