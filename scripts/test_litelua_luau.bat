@@ -1,6 +1,6 @@
 @echo off
 
-call build_litelua_luau.bat
+call %~dp0\build_litelua_luau.bat
 
 set LITELUA_LUAU_TEST_EXE=%LITELUA_BUILD_DIR%\litelua_tests_luau.exe
 

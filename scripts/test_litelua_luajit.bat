@@ -1,6 +1,6 @@
 @echo off
 
-call build_litelua_luajit.bat
+call %~dp0\build_litelua_luajit.bat
 
 set LITELUA_LUAJIT_TEST_EXE=%LITELUA_BUILD_DIR%\litelua_tests_luajit.exe
 
