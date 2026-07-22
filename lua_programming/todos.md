@@ -1,0 +1,6 @@
+- minimize runtime
+- new style cpp: data oriented programming and pure procedural programming
+- cpp procedural
+- cpp freestanding
+- cpp embedded
+- ada for embedded
