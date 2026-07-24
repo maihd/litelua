@@ -1,4 +1,4 @@
-/// LiteLua v0.0.2-dev
+/// LiteLua v0.0.4-dev
 /// Copyright: MaiHD @ 2025
 
 #pragma once

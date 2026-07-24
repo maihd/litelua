@@ -9,7 +9,7 @@ Mainly created for LiteFX. Written in C11, mordern C code.
 - Thin layer API to support working with multiple Lua runtimes. 
 - Easy add extensions. This library also have Lua52, Lua53 extensions already for LuaJIT.
 - Quality of tools: Debugging, Profiler.
-- Controlling JIT (if supported)
+- Controlling JIT (if supported).
 - One place of all runtime docs to work with Lua runtime.
 - No changes in the Lua C API code.
 - Easy bindings to other languages.

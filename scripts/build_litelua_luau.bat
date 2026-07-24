@@ -25,10 +25,13 @@ clang -c "%LITELUA_DIR%\src\luau_ext\lauxlib.c" -o "%LITELUA_BUILD_DIR%\litelua_
 
 llvm-ar x "%LITELUA_LUAU_FOLDER%\prebuilt\win_x64\Luau.Config.lib" --output %LITELUA_BUILD_DIR%
 llvm-ar x "%LITELUA_LUAU_FOLDER%\prebuilt\win_x64\Luau.Require.lib" --output %LITELUA_BUILD_DIR%
-llvm-ar x "%LITELUA_LUAU_FOLDER%\prebuilt\win_x64\Luau.RequireNavigator.lib" --output %LITELUA_BUILD_DIR%
 llvm-ar x "%LITELUA_LUAU_FOLDER%\prebuilt\win_x64\Luau.Compiler.lib" --output %LITELUA_BUILD_DIR%
 llvm-ar x "%LITELUA_LUAU_FOLDER%\prebuilt\win_x64\Luau.Ast.lib" --output %LITELUA_BUILD_DIR%
 llvm-ar x "%LITELUA_LUAU_FOLDER%\prebuilt\win_x64\Luau.VM.lib" --output %LITELUA_BUILD_DIR%
+
+if exist "%LITELUA_LUAU_FOLDER%\prebuilt\win_x64\Luau.RequireNavigator.lib" (
+    llvm-ar x "%LITELUA_LUAU_FOLDER%\prebuilt\win_x64\Luau.RequireNavigator.lib" --output %LITELUA_BUILD_DIR%
+)
 
 llvm-ar rc "%LITELUA_BUILD_DIR%\litelua_luau.lib" "%LITELUA_BUILD_DIR%\*.obj"
 

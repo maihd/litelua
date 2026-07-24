@@ -21,11 +21,17 @@ set LITELUA_LUAJIT_COMPILE_OPTIONS=^
 
 clang -c "%LITELUA_DIR%\src\litelua_luajit.c" -o "%LITELUA_BUILD_DIR%\litelua_luajit.obj" %LITELUA_LUAJIT_COMPILE_OPTIONS%
 
+:: Extract obj from LuaJIT.lib
 llvm-ar x "%LITELUA_LUAJIT_LIBRARY%" --output "%LITELUA_BUILD_DIR%"
 
+:: Packaging LuaJIT obj and LiteLua obj into one .lib
 llvm-ar rc "%LITELUA_BUILD_DIR%\litelua_luajit.lib" "%LITELUA_BUILD_DIR%\*.obj"
 
 :: Copy output files
+
+if not exist "%LITELUA_OUTPUT%" (
+    mkdir "%LITELUA_OUTPUT%"
+)
 
 if not exist "%LITELUA_LUAJIT_OUTPUT%" (
     mkdir "%LITELUA_LUAJIT_OUTPUT%"
@@ -49,3 +55,5 @@ xcopy "%LITELUA_DIR%\src\litelua_config.h" "%LITELUA_LUAJIT_OUTPUT%\include" /D 
 xcopy "%LITELUA_LUAJIT_INCLUDE%" "%LITELUA_LUAJIT_OUTPUT%\include" /D /E /Y /Q
 
 xcopy "%LITELUA_BUILD_DIR%"\litelua_luajit.lib %LITELUA_LUAJIT_OUTPUT%\prebuilt\win_x64 /D /E /Y /Q
+
+rmdir "%LITELUA_LUAJIT_OUTPUT%\include\luau_ext" /Q /S
