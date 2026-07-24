@@ -1,6 +1,6 @@
-/// LiteLua v0.0.2-dev
-/// Copyright: MaiHD @ 2025
-/// LuaJIT 2 implementation
+/// LiteLua v0.1.5-dev
+/// Copyright: MaiHD @ 2025 - 2026
+/// LuaJIT v2 & Lua 5.2 implementation
 
 #include "litelua.h"
 
@@ -9,7 +9,7 @@
 #include <assert.h>
 
 // LuaJIT-specific implementations
-#if !defined(LITELUA_USING_LUAJIT)
+#if !defined(LITELUA_USING_LUAJIT) && !defined(LITELUA_USING_LUA)
 #error "Unsupported Lua runtime"
 #endif
 
@@ -29,6 +29,7 @@ static int litelua_load_string_luajit(LiteLua* context, const char* str, size_t 
 {
     return luaL_loadstring(context->L, str);
 }
+
 
 // @impl(maihd): Luau's litelua_load_string
 LiteLuaResult litelua_load_string(LiteLua* context, const char* str, size_t len)
@@ -101,6 +102,7 @@ LiteLuaResult litelua_load_file(LiteLua* context, const char* path, size_t path_
     };
     return result;
 }
+
 
 // Using UnityBuild to reuse implementation
 #include "litelua_common.c"

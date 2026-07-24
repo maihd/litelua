@@ -1,5 +1,5 @@
-/// LiteLua v0.0.2-dev
-/// Copyright: MaiHD @ 2025
+/// LiteLua v0.1.5-dev
+/// Copyright: MaiHD @ 2025-2026
 
 
 // @impl(maihd): litelua_create
@@ -213,8 +213,13 @@ LiteLuaResult litelua_bind_func(LiteLua* context, const char* name, size_t len, 
         return result;
     }
 
+#if defined(LITELUA_USING_LUA)
+    lua_pushcfunction(context->L, func);
+    lua_setglobal(context->L, name);
+#else
     luaL_Reg reg = { name, func };
     luaL_register(context->L, "_G", &reg);
+#endif
 
     LiteLuaResult result;
     result.error    = LiteLuaError_None;
@@ -238,10 +243,23 @@ LiteLuaResult litelua_bind_module(LiteLua* context, const char* name, size_t len
         return result;
     }
 
+#if defined(LITELUA_USING_LUA)
+    lua_newtable(context->L);
+
+    for (int i = 0; i < count; i++)
+    {
+        lua_pushstring(context->L, funcs[i].name);
+        lua_pushcfunction(context->L, funcs[i].func);
+        lua_settable(context->L, -3);
+    }
+
+    lua_setglobal(context->L, name);
+#else
     for (int i = 0; i < count; i++)
     {
         luaL_register(context->L, name, &funcs[i]);
     }
+#endif
 
     LiteLuaResult result;
     result.error    = LiteLuaError_None;

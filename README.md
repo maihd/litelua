@@ -24,6 +24,7 @@ Mainly created for LiteFX. Written in C11, mordern C code.
 - Focused on the runtime parts, not the C API.
 - Focused on simple, well-docs functions, clear names. And keep its low.
 - Only functions that need wrapper are made, otherwise use common functions (Luau and Lua have many common C API).
+- Focus on Lua52 compat (Lua 5.2, LuaJIT 2.1 + lua52compat, Luau + handwritten extensions)
 
 
 ## Extensions & experiments
@@ -63,6 +64,6 @@ Find in `libs` folders.
 
 
 ## Meta
-- Version: v0.0.4-dev
+- Version: v0.0.5-dev
 - License: Unlicense
 - Copyright: MaiHD @ 2025-2026

@@ -18,7 +18,7 @@ when ODIN_OS == .Windows {
 VERSION_MAJOR   		:: "0"
 VERSION_MINOR   		:: "1"
 VERSION_NUM     		:: 001
-VERSION_RELEASE 		:: "4"
+VERSION_RELEASE 		:: "5"
 
 LUA_VERSION_MAJOR       :: "5"
 LUA_VERSION_MINOR       :: "2"

@@ -1,5 +1,5 @@
 
-#include "src/litelua.h"
+#include "litelua.h"
 
 #include <stdio.h>
 #include <string.h>

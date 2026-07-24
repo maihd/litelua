@@ -2,8 +2,23 @@
 .vscode
 .DS_Store
 
-# Build folder
+# Build folders
 
-libs
+# libs
 build
 output
+
+# Libs build folders & files
+lua-5.2.4/include
+lua-5.2.4/prebuilt
+
+luau/build
+luau/include
+luau/prebuilt
+
+luajit/include
+luajit/prebuilt
+luajit/src/*.lib
+luajit/src/*.exp
+luajit/src/*.exe
+luajit/src/*.pdb

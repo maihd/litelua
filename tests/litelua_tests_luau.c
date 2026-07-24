@@ -1,5 +1,5 @@
 // Use LiteLua as C library
-#include "src/litelua.h"
+#include "litelua.h"
 
 #include <stdio.h>
 #include <stdlib.h>

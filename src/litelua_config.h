@@ -1,5 +1,5 @@
-/// LiteLua v0.0.4-dev
-/// Copyright: MaiHD @ 2025
+/// LiteLua v0.1.5-dev
+/// Copyright: MaiHD @ 2025-2026
 
 #pragma once
 
@@ -12,6 +12,10 @@
 // Un-comment to make LiteLua use Luau
 // #define LITELUA_USING_LUAU 1
 
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 // Include Lua or LuaJIT headers
 #if defined(LITELUA_USING_LUAJIT) || defined(LITELUA_USING_LUA)
@@ -50,6 +54,10 @@
     #include LITELUA_LUAU_LIBS
     #include LITELUA_LUAU_CODE
 
+#endif
+
+#ifdef __cplusplus
+}
 #endif
 
 // Config attributes

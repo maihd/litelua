@@ -1,4 +1,4 @@
-/// LiteLua v0.0.2-dev
+/// LiteLua v0.1.5-dev
 /// Copyright: MaiHD @ 2025
 
 #pragma once
@@ -12,6 +12,7 @@
 #include <stdbool.h>
 
 #include "litelua_config.h"
+
 
 // -----------------------------------
 // Typedef from Lua runtime
@@ -130,6 +131,7 @@ typedef struct LiteLuaResult
 // Runtime management
 // -----------------------------------
 
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -179,6 +181,7 @@ LITELUA_API LiteLuaResult   litelua_bind_module(LiteLua* context, const char* na
 // C <-> Lua
 // -----------------------------------
 
+
 #ifdef LITELUA_UNNEEDED
 
 /// Get string from Lua runtime
@@ -214,6 +217,7 @@ LITELUA_API uint64_t        litelua_touint64(LiteLua* context);
 #ifdef __cplusplus
 }
 #endif
+
 
 //! EOF
 

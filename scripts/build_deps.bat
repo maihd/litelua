@@ -4,6 +4,9 @@
 call %~dp0\download_deps.bat
 
 :: Checking current OS
+set LUA_TARGET_SYSTEM=""
+set LUA_PREBUILT_FOLDER="prebuilt/win_x64"
+
 set LUAJIT_TARGET_SYSTEM=""
 set LUAJIT_PREBUILT_FOLDER="prebuilt/win_x64"
 
@@ -59,6 +62,28 @@ if not exist %LUAJIT_PREBUILT_FOLDER% (
 
 xcopy src\lua51.lib %LUAJIT_PREBUILT_FOLDER% /D /Y /Q
 rename %LUAJIT_PREBUILT_FOLDER%\lua51.lib lua51_static.lib
+
+popd
+
+:: Build Lua
+pushd %LITELUA_DIR%\libs\lua-5.2.4
+
+if not exist %LUA_PREBUILT_FOLDER% (
+    mkdir %LUA_PREBUILT_FOLDER%
+)
+
+clang -c -O2 src/*.c -D_CRT_SECURE_NO_WARNINGS -DLUA_COMPAT_ALL
+llvm-ar rcs %LUA_PREBUILT_FOLDER%/lua52_static.lib *.o
+rm -rf *.o
+
+if not exist include (
+    mkdir include
+)
+
+xcopy src\lua.h include /D /Y /Q
+xcopy src\lualib.h include /D /Y /Q
+xcopy src\lauxlib.h include /D /Y /Q
+xcopy src\luaconf.h include /D /Y /Q
 
 popd
 
