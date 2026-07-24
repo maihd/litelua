@@ -27,6 +27,7 @@ Mainly created for LiteFX. Written in C11, mordern C code.
 
 
 ## Extensions & experiments
+Check `lua_programming` for more details.
 - How to management memory with Lua (Memory allocator and GC)
 - Sandboxing Lua scripts, some poorman security tricks to make Lua scripts safer
 - Lua for pure scripting purpose, using flat data, and procedural programming only
