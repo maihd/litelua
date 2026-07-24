@@ -32,6 +32,7 @@
 typedef struct LiteLua LiteLua;
 
 
+/// LiteLuaIO
 /// IO plugins
 typedef struct LiteLuaIO
 {
@@ -42,18 +43,49 @@ typedef struct LiteLuaIO
 } LiteLuaIO;
 
 
+/// LiteLuaGCFlags
+typedef enum LiteLuaGCFlags
+{
+    LiteLuaGC_None,
+    LiteLuaGC_Incremental,
+    LiteLuaGC_Generational,
+} LiteLuaGCFlags;
+
+
+/// LiteLuaGC
 /// Memory manager, GC customizations
 typedef struct LiteLuaGC
 {
-    uint32_t    flags;
+    LiteLuaGCFlags  flags;
 
-    void*       user_data;
+    void*           user_data;
 
-    void*       (*alloc)(void* user_data, void* old_buffer, size_t old_size, size_t new_size);
-    // void        (*free)(void* user_data, void* buffer);
+    void*           (*alloc)(void* user_data, void* old_buffer, size_t old_size, size_t new_size);
 } LiteLuaGC;
 
 
+/// LiteLuaLogLevel
+typedef enum LiteLuaLogLevel
+{
+    LiteLuaLog_Info,
+    LiteLuaLog_Warn,
+    LiteLuaLog_Error,
+    LiteLuaLog_Debug,
+} LiteLuaLogLevel;
+
+
+/// LiteLuaLogger
+/// Logger for system info, tracking error
+typedef struct LiteLuaLogger
+{
+    void*               user_data;
+    LiteLuaLogLevel     default_log_level;
+
+    void                (*log)(void* user_data, LiteLuaLogLevel level, const char* text);
+} LiteLuaLogger;
+
+
+/// LiteLua
 /// Context of LiteLua (Core components)
 struct LiteLua
 {
@@ -63,6 +95,7 @@ struct LiteLua
 
     LiteLuaIO           io;
     LiteLuaGC           gc;
+    LiteLuaLogger       logger;
 
     // Runtime-based required fields
 

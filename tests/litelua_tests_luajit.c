@@ -10,7 +10,7 @@
 
 int main()
 {
-    printf("LiteLua v0.0.1-dev LuaJIT Tests\n");
+    printf("LiteLua v0.0.4-dev LuaJIT Tests\n");
 
     LiteLuaIO lua_io = {0};
     LiteLuaGC lua_gc = {0};

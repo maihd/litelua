@@ -15,7 +15,7 @@ static void     unload_file_data(void* user_data, void* data, size_t data_size);
 
 int main()
 {
-    printf("LiteLua v0.0.1-dev Luau Tests\n");
+    printf("LiteLua v0.0.4-dev Luau Tests\n");
 
     LiteLuaIO lua_io = {
         .user_data = NULL,
